@@ -1,0 +1,5 @@
+-C nolist
+set GCC_LIB=<%= File.join('/usr/lib/gcc/x86_64-redhat-linux/', @gcc_version, '32') %>
+set GCC_SEARCH_PATH=$GCC_LIB:/usr/lib:/lib
+set GCC_EXCEP_LIB=gcc_s
+
