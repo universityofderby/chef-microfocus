@@ -39,3 +39,8 @@ end
 describe package('libgcc.i686') do
   it { should be_installed }
 end
+
+#check mflm_manager process
+describe process('mflm_manager') do
+  it { should be_running }
+end
