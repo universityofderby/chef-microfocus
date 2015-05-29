@@ -35,6 +35,7 @@ end
 yum_package 'glibc'
 yum_package 'glibc.i686'
 yum_package 'libgcc'
+yum_package 'libgcc.i686'
 yum_package 'libstdc++'
 
 directory mf_home do
