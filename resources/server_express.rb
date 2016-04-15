@@ -84,6 +84,8 @@ action :create do
     mode new_resource.mode
     strip_components 0
     not_if { ::File.exist?(::File.join(new_resource.path, new_resource.server_express_dir)) }
+    notifies :run, 'ruby_block[install]', :immediately
+    notifies :run, 'ruby_block[mflmcmd]', :immediately
     action :put
   end
 
@@ -103,6 +105,8 @@ action :create do
       end
       install.wait_for(:exit)
     end
+    only_if { ::File.exist?(::File.join(new_resource.path, new_resource.server_express_dir, 'install')) }
+    action :nothing
   end
 
   # execute mflmcmd
@@ -118,5 +122,7 @@ action :create do
       end
       mflmcmd.wait_for(:exit)
     end
+    only_if { ::File.exist?(::File.join(new_resource.path, new_resource.license_manager_dir, 'mflmcmd')) }
+    action :nothing
   end
 end
