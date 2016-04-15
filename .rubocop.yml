@@ -1,12 +1,7 @@
 AllCops:
   Exclude:
-    - vendor/**
-    - berks-cookbooks/**/*
-    - metadata.rb
-    - files/default/**/*
-Encoding:
-  Enabled: false
+    - vendor/**/*
+    - Guardfile
+
 LineLength:
   Enabled: false
-RescueModifier:
-  Enabled: true

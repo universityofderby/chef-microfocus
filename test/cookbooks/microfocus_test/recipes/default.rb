@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: microfocus
+# Cookbook Name:: microfocus_test
 # Recipe:: default
 #
 # Copyright 2016 University of Derby
@@ -16,3 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+microfocus_server_express '/opt/microfocus' do
+  license_number node['microfocus']['server_express']['license_number']
+  serial_number node['microfocus']['server_express']['serial_number']
+  url node['microfocus']['server_express']['url']
+end
