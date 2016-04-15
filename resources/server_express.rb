@@ -46,12 +46,18 @@ property :install_responses, Array, default: lazy {
    { '\(y\/n\)' => "n\n" } # 13. Do you wish to configure Enterprise Server now? (y/n):
   ]
 }
+property :mflmcmd_responses, Array, default: lazy {
+  [{ 'License' => "I\n" }, # 1. Select the function you require from the list:
+   { 'Serial Number' => "#{serial_number}\n" }, # 2. Enter the Serial Number part of the License Key:
+   { 'License Number' => "#{license_number}\n" } # 3. Enter the License Number part of the License Key:
+  ]
+}
 
 # default action :create
 action :create do
   # greenletters gem required for responding to interactive install and mflmcmd commands
-  chef_gem 'greenletters'
-    compile_time false if Chef::Resource::ChefGem.method_defined?(:compile_time)
+  chef_gem 'greenletters' do
+    compile_time true
   end
   require 'greenletters'
 
@@ -81,7 +87,7 @@ action :create do
     action :put
   end
 
-  # execute installer
+  # execute install
   ruby_block 'install' do
     block do
       install = Greenletters::Process.new(::File.join(new_resource.path, new_resource.server_express_dir, 'install'), transcript: $stdout, timeout: 300)
@@ -104,10 +110,12 @@ action :create do
     block do
       mflmcmd = Greenletters::Process.new("cd #{::File.join(new_resource.path, new_resource.license_manager_dir)};./mflmcmd", transcript: $stdout, timeout: 300)
       mflmcmd.start!
-      mflmcmd.wait_for(:output, / /i)
-      mflmcmd << "I\n"
-      mflmcmd << "#{new_resource.serial_number}\n"
-      mflmcmd << "#{new_resource.license_number}\n"
+      new_resource.mflmcmd_responses.each do |h|
+        h.each do |p, i|
+          mflmcmd.wait_for(:output, /#{p}/i)
+          mflmcmd << i
+        end
+      end
       mflmcmd.wait_for(:exit)
     end
   end
