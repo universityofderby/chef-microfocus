@@ -71,38 +71,22 @@ action :create do
         install << ' '
       end
       install.start!
-      [ # 01. Do you wish to continue (y/n):
-        { method: 'wait_for', pattern: '(y\/n)', input: 'y\n' },
-        # 02. Do you agree to the terms of the License Agreement? (y/n):
-        { method: 'wait_for', pattern: '(y\/n)', input: 'y\n' },
-        # 03. Please confirm that you want to continue with this installation (y/n):
-        { method: 'wait_for', pattern: '(y\/n)', input: 'y\n' },
-        # 04. Please press return when you are ready:
-        { method: 'wait_for', pattern: 'Please press return when you are ready:', input: '\n' },
-        # 05. Please confirm your understanding of the above reference environment details (y/n):
-        { method: 'wait_for', pattern: '(y\/n)', input: 'y\n' },
-        # 06. Do you want to make use of COBOL and Java working together? (y/n):
-        { method: 'wait_for', pattern: '(y\/n)', input: 'n\n' },
-        # 07. Would you like to install LMF now? (y/n):
-        { method: 'wait_for', pattern: '(y\/n)', input: 'y\n' },
-        # 08. Enter the directory name where you wish to install License Manager
-        { method: 'wait_for', pattern: '(y\/n)', input: ::File.join(new_resource.path, new_resource.license_manager_dir) },
-        # 09. do you wish to create it ? (y/n)
-        { method: 'wait_for', pattern: '(y\/n)', input: 'y\n' },
-        # 10. Do you want only superuser to be able to access the License Admin System? (y/n)
-        { method: 'wait_for', pattern: '(y\/n)', input: 'y\n' },
-        # 11. Do you want license manager to be automatically started at boot time? (y/n)
-        { method: 'wait_for', pattern: '(y\/n)', input: 'n\n' },
-        # 12. Please enter either 32 or 64 to set the system default mode:
-        { method: 'wait_for', pattern: '(y\/n)', input: '64\n' },
-        # 13. Do you wish to configure Enterprise Server now? (y/n):
-        { method: 'wait_for', pattern: '(y\/n)', input: 'n\n' }
+      [{ pattern: '\(y\/n\)', input: "y\n" }, # 1. Do you wish to continue (y/n):
+       { pattern: '\(y\/n\)', input: "y\n" }, # 2. Do you agree to the terms of the License Agreement? (y/n):
+       { pattern: '\(y\/n\)', input: "y\n" }, # 3. Please confirm that you want to continue with this installation (y/n):
+       { pattern: 'Please press return when you are ready:', input: "\n" }, # 4. Please press return when you are ready:
+       { pattern: '\(y\/n\)', input: "y\n" }, # 5. Please confirm your understanding of the above reference environment details (y/n):
+       { pattern: '\(y\/n\)', input: "n\n" }, # 6. Do you want to make use of COBOL and Java working together? (y/n):
+       { pattern: '\(y\/n\)', input: "y\n" }, # 7. Would you like to install LMF now? (y/n):
+       { pattern: 'Press Enter for default directory', input: "#{::File.join(new_resource.path, new_resource.license_manager_dir)}\n" }, # 8. Enter the directory name where you wish to install License Manager
+       { pattern: '\(y\/n\)', input: "y\n" }, # 9. do you wish to create it ? (y/n)
+       { pattern: '\(y\/n\)', input: "y\n" }, # 10. Do you want only superuser to be able to access the License Admin System? (y/n)
+       { pattern: '\(y\/n\)', input: "n\n" }, # 11. Do you want license manager to be automatically started at boot time? (y/n)
+       { pattern: 'Please enter either 32 or 64 to set the system default mode:', input: "64\n" }, # 12. Please enter either 32 or 64 to set the system default mode:
+       { pattern: '\(y\/n\)', input: "n\n" } # 13. Do you wish to configure Enterprise Server now? (y/n):
       ].each do |r|
-        case r[:method]
-        when 'wait_for'
-          install.wait_for(:output, /#{r[:pattern]}/i)
-          install << r[:input]
-        end
+        install.wait_for(:output, /#{r[:pattern]}/i)
+        install << r[:input]
       end
       install.wait_for(:exit)
     end
