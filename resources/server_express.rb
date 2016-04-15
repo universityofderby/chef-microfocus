@@ -30,12 +30,31 @@ property :path, String, default: '/opt/microfocus'
 property :serial_number, String, required: true
 property :server_express_dir, default: 'cobol'
 property :url, String, required: true
-#property :install_responses, Array, default: lazy {
-#
-#}
+property :install_responses, Array, default: lazy {
+  [{ '\(y\/n\)' => "y\n" }, # 1. Do you wish to continue (y/n):
+   { '\(y\/n\)' => "y\n" }, # 2. Do you agree to the terms of the License Agreement? (y/n):
+   { '\(y\/n\)' => "y\n" }, # 3. Please confirm that you want to continue with this installation (y/n):
+   { 'Please press return when you are ready:' => "\n" }, # 4. Please press return when you are ready:
+   { '\(y\/n\)' => "y\n" }, # 5. Please confirm your understanding of the above reference environment details (y/n):
+   { '\(y\/n\)' => "n\n" }, # 6. Do you want to make use of COBOL and Java working together? (y/n):
+   { '\(y\/n\)' => "y\n" }, # 7. Would you like to install LMF now? (y/n):
+   { 'Press Enter for default directory' => "#{::File.join(path, license_manager_dir)}\n" }, # 8. Enter the directory name where you wish to install License Manager
+   { '\(y\/n\)' => "y\n" }, # 9. do you wish to create it ? (y/n)
+   { '\(y\/n\)' => "y\n" }, # 10. Do you want only superuser to be able to access the License Admin System? (y/n)
+   { '\(y\/n\)' => "n\n" }, # 11. Do you want license manager to be automatically started at boot time? (y/n)
+   { 'Please enter either 32 or 64 to set the system default mode:' => "64\n" }, # 12. Please enter either 32 or 64 to set the system default mode:
+   { '\(y\/n\)' => "n\n" } # 13. Do you wish to configure Enterprise Server now? (y/n):
+  ]
+}
 
 # default action :create
 action :create do
+  # greenletters gem required for responding to interactive install and mflmcmd commands
+  chef_gem 'greenletters'
+    compile_time false if Chef::Resource::ChefGem.method_defined?(:compile_time)
+  end
+  require 'greenletters'
+
   # install required packages
   %w(gcc glibc glibc.i686 libgcc libgcc.i686).each do |p|
     package p
@@ -62,10 +81,6 @@ action :create do
     action :put
   end
 
-  # greenletters gem required for responding to interactive install and license commands
-  chef_gem 'greenletters'
-  require 'greenletters'
-
   # execute installer
   ruby_block 'install' do
     block do
@@ -74,26 +89,26 @@ action :create do
         install << ' '
       end
       install.start!
-      [{ '\(y\/n\)' => "y\n" }, # 1. Do you wish to continue (y/n):
-       { '\(y\/n\)' => "y\n" }, # 2. Do you agree to the terms of the License Agreement? (y/n):
-       { '\(y\/n\)' => "y\n" }, # 3. Please confirm that you want to continue with this installation (y/n):
-       { 'Please press return when you are ready:' => "\n" }, # 4. Please press return when you are ready:
-       { '\(y\/n\)' => "y\n" }, # 5. Please confirm your understanding of the above reference environment details (y/n):
-       { '\(y\/n\)' => "n\n" }, # 6. Do you want to make use of COBOL and Java working together? (y/n):
-       { '\(y\/n\)' => "y\n" }, # 7. Would you like to install LMF now? (y/n):
-       { 'Press Enter for default directory' => "#{::File.join(new_resource.path, new_resource.license_manager_dir)}\n" }, # 8. Enter the directory name where you wish to install License Manager
-       { '\(y\/n\)' => "y\n" }, # 9. do you wish to create it ? (y/n)
-       { '\(y\/n\)' => "y\n" }, # 10. Do you want only superuser to be able to access the License Admin System? (y/n)
-       { '\(y\/n\)' => "n\n" }, # 11. Do you want license manager to be automatically started at boot time? (y/n)
-       { 'Please enter either 32 or 64 to set the system default mode:' => "64\n" }, # 12. Please enter either 32 or 64 to set the system default mode:
-       { '\(y\/n\)' => "n\n" } # 13. Do you wish to configure Enterprise Server now? (y/n):
-      ].each do |h|
+      new_resource.install_responses.each do |h|
         h.each do |p, i|
           install.wait_for(:output, /#{p}/i)
           install << i
         end
       end
       install.wait_for(:exit)
+    end
+  end
+
+  # execute mflmcmd
+  ruby_block 'mflmcmd' do
+    block do
+      mflmcmd = Greenletters::Process.new("cd #{::File.join(new_resource.path, new_resource.license_manager_dir)};./mflmcmd", transcript: $stdout, timeout: 300)
+      mflmcmd.start!
+      mflmcmd.wait_for(:output, / /i)
+      mflmcmd << "I\n"
+      mflmcmd << "#{new_resource.serial_number}\n"
+      mflmcmd << "#{new_resource.license_number}\n"
+      mflmcmd.wait_for(:exit)
     end
   end
 end
