@@ -125,23 +125,21 @@ action :create do
     only_if { ::File.exist?(::File.join(new_resource.path, new_resource.license_manager_dir, 'mflmcmd')) }
     action :nothing
   end
-end
 
-# license manager init.d script
-template '/etc/rc.d/init.d/mflm_manager' do
-  source 'mflm_manager.erb'
-  cookbook 'microfocus'
-  mode 0755
-  owner 'root'
-  group 'root'
-  variables(
-    license_manager_path: ::File.join(new_resource.path, new_resource.license_manager_dir)
-  )
-  action :create_if_missing
-end
+  # license manager init.d script
+  template '/etc/rc.d/init.d/mflm_manager' do
+    source 'mflm_manager.erb'
+    cookbook 'microfocus'
+    mode 0755
+    owner 'root'
+    group 'root'
+    variables(license_manager_path: ::File.join(new_resource.path, new_resource.license_manager_dir))
+    action :create_if_missing
+  end
 
-# license manager service
-service 'mflm_manager' do
-  supports restart: true, status: true
-  action [:enable, :start]
+  # license manager service
+  service 'mflm_manager' do
+    supports restart: true, status: true
+    action [:enable, :start]
+  end
 end
