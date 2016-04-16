@@ -1,7 +1,7 @@
 microfocus cookbook CHANGELOG
 ==========================
 
-2.0.0 (2016-04-15)
+2.0.0 (2016-04-16)
 ------------------
 - Refactored as resource cookbook
 
