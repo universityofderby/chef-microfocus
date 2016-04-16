@@ -27,7 +27,7 @@ property :license_number, String, required: true
 property :mode, Integer, default: 0755
 property :owner, String, default: 'root'
 property :serial_number, String, required: true
-property :server_express_path, default: '/opt/microfocus/cobol'
+property :server_express_path, name_property: true, default: '/opt/microfocus/cobol'
 property :url, String, required: true
 property :install_responses, Array, default: lazy {
   [{ '\(y\/n\)' => "y\n" }, # 1. Do you wish to continue (y/n):
@@ -66,7 +66,7 @@ action :create do
   end
 
   # create base directory
-  directory ::File.basename(new_resource.server_express_path) do
+  directory ::File.basename(server_express_path) do
     owner new_resource.owner
     group new_resource.group
     mode new_resource.mode
@@ -74,15 +74,15 @@ action :create do
   end
 
   # extract server express archive
-  ark ::File.basename(new_resource.server_express_path) do
-    path ::File.dirname(new_resource.server_express_path)
+  ark ::File.basename(server_express_path) do
+    path ::File.dirname(server_express_path)
     url new_resource.url
-    checksum new_resource.checksum unless new_resource.checksum.nil?
+    checksum new_resource.checksum if property_is_set?(:checksum)
     owner new_resource.owner
     group new_resource.group
     mode new_resource.mode
     strip_components 0
-    not_if { ::File.exist?(new_resource.server_express_path) }
+    not_if { ::File.exist?(server_express_path) }
     notifies :run, 'ruby_block[install]', :immediately
     notifies :run, 'ruby_block[mflmcmd]', :immediately
     action :put
@@ -91,12 +91,12 @@ action :create do
   # execute server express install
   ruby_block 'install' do
     block do
-      install = Greenletters::Process.new(::File.join(new_resource.server_express_path, 'install'), transcript: $stdout, timeout: 300)
+      install = Greenletters::Process.new(::File.join(server_express_path, 'install'), transcript: $stdout, timeout: 300)
       install.on(:output, /--more--/i) do
         install << ' '
       end
       install.start!
-      new_resource.install_responses.each do |r|
+      install_responses.each do |r|
         r.each do |p, i|
           install.wait_for(:output, /#{p}/i)
           install << i
@@ -104,16 +104,16 @@ action :create do
       end
       install.wait_for(:exit)
     end
-    only_if { ::File.exist?(::File.join(new_resource.server_express_path, 'install')) }
+    only_if { ::File.exist?(::File.join(server_express_path, 'install')) }
     action :nothing
   end
 
   # execute mflmcmd to install license
   ruby_block 'mflmcmd' do
     block do
-      mflmcmd = Greenletters::Process.new("cd #{new_resource.license_manager_path};./mflmcmd", transcript: $stdout, timeout: 300)
+      mflmcmd = Greenletters::Process.new("cd #{license_manager_path};./mflmcmd", transcript: $stdout, timeout: 300)
       mflmcmd.start!
-      new_resource.mflmcmd_responses.each do |r|
+      mflmcmd_responses.each do |r|
         r.each do |p, i|
           mflmcmd.wait_for(:output, /#{p}/i)
           mflmcmd << i
@@ -121,7 +121,7 @@ action :create do
       end
       mflmcmd.wait_for(:exit)
     end
-    only_if { ::File.exist?(::File.join(new_resource.license_manager_path, 'mflmcmd')) }
+    only_if { ::File.exist?(::File.join(license_manager_path, 'mflmcmd')) }
     action :nothing
   end
 
@@ -132,8 +132,7 @@ action :create do
     mode 0755
     owner 'root'
     group 'root'
-    variables(license_manager_path: new_resource.license_manager_path)
-    action :create_if_missing
+    variables(license_manager_path: license_manager_path)
   end
 
   # license manager service

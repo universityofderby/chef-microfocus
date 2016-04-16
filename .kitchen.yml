@@ -9,6 +9,7 @@ verifier:
   name: inspec
 
 platforms:
+  - name: centos-6.7
   - name: centos-7.2
 
 suites:
@@ -18,6 +19,7 @@ suites:
     attributes:
       microfocus:
         server_express:
+          checksum: <%= ENV['MICROFOCUS_SERVER_EXPRESS_CHECKSUM'] %>
           license_number: <%= ENV['MICROFOCUS_SERVER_EXPRESS_LICENSE_NUMBER'] %>
           serial_number: <%= ENV['MICROFOCUS_SERVER_EXPRESS_SERIAL_NUMBER'] %>
           url: <%= ENV['MICROFOCUS_SERVER_EXPRESS_URL'] %>
