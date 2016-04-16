@@ -74,7 +74,7 @@ action :create do
     recursive true
   end
 
-  # extract archive
+  # extract server express archive
   ark new_resource.server_express_dir do
     path new_resource.path
     url new_resource.url
@@ -89,7 +89,7 @@ action :create do
     action :put
   end
 
-  # execute install
+  # execute server express install
   ruby_block 'install' do
     block do
       install = Greenletters::Process.new(::File.join(new_resource.path, new_resource.server_express_dir, 'install'), transcript: $stdout, timeout: 300)
@@ -97,8 +97,8 @@ action :create do
         install << ' '
       end
       install.start!
-      new_resource.install_responses.each do |h|
-        h.each do |p, i|
+      new_resource.install_responses.each do |r|
+        r.each do |p, i|
           install.wait_for(:output, /#{p}/i)
           install << i
         end
@@ -109,13 +109,13 @@ action :create do
     action :nothing
   end
 
-  # execute mflmcmd
+  # execute mflmcmd to install license
   ruby_block 'mflmcmd' do
     block do
       mflmcmd = Greenletters::Process.new("cd #{::File.join(new_resource.path, new_resource.license_manager_dir)};./mflmcmd", transcript: $stdout, timeout: 300)
       mflmcmd.start!
-      new_resource.mflmcmd_responses.each do |h|
-        h.each do |p, i|
+      new_resource.mflmcmd_responses.each do |r|
+        r.each do |p, i|
           mflmcmd.wait_for(:output, /#{p}/i)
           mflmcmd << i
         end
@@ -125,4 +125,23 @@ action :create do
     only_if { ::File.exist?(::File.join(new_resource.path, new_resource.license_manager_dir, 'mflmcmd')) }
     action :nothing
   end
+end
+
+# license manager init.d script
+template '/etc/rc.d/init.d/mflm_manager' do
+  source 'mflm_manager.erb'
+  cookbook 'microfocus'
+  mode 0755
+  owner 'root'
+  group 'root'
+  variables(
+    license_manager_path: ::File.join(new_resource.path, new_resource.license_manager_dir)
+  )
+  action :create_if_missing
+end
+
+# license manager service
+service 'mflm_manager' do
+  supports restart: true, status: true
+  action [:enable, :start]
 end

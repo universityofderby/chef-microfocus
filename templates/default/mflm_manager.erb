@@ -1,0 +1,47 @@
+#!/bin/bash
+# chkconfig: 2345 90 10
+# description: Micro Focus License Manager service
+# processname: mflm_manager
+
+# Source function library.
+. /etc/init.d/functions
+
+RETVAL=0
+
+start() {
+  sh /etc/mflmrcscript > /dev/null 2>&1
+  RETVAL=$?
+  [ $RETVAL -eq 0 ] && touch /var/lock/subsys/mflm_manager || RETVAL=1
+}
+
+stop() {
+  <%= @license_manager_path %>/lmfgetpv k
+  RETVAL=$?
+	[ "$RETVAL" = 0 ] && rm -f /var/lock/subsys/mflm_manager
+}
+
+status() {
+  <%= @license_manager_path %>/lmfgetpv
+  RETVAL=$?
+}
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart)
+    stop
+    start
+    ;;
+  status)
+    status
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart|status}"
+    RETVAL=1
+esac
+
+exit $RETVAL
