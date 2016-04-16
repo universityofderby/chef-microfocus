@@ -45,6 +45,6 @@ describe service('mflm_manager') do
 end
 
 # license manager process
-describe process('./mflm_manager') do
-  it { should be_running }
+describe processes('mflm_manager') do
+  its('users') { should eq ['root'] }
 end
