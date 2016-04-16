@@ -1,5 +1,5 @@
 # packages
-%w(gcc glibc glibc.i686 libgcc libgcc.i686).each do |p|
+%w(gcc glibc libgcc).each do |p|
   describe package(p) do
     it { should be_installed }
   end
@@ -40,11 +40,16 @@ end
 
 # license manager service
 describe service('mflm_manager') do
-  it { should be_enabled }
+  it { should be_installed }
   it { should be_running }
 end
 
+describe service('mflm_manager').runlevels(2, 3, 4, 5) do
+  it { should be_enabled }
+end
+
 # license manager process
-describe processes('mflm_manager') do
+describe processes('./mflm_manager') do
+  its('list.length') { should eq 1 }
   its('users') { should eq ['root'] }
 end
