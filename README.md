@@ -1,6 +1,7 @@
 microfocus chef cookbook
 =====================
 The `microfocus` cookbook provides the `microfocus_server_express` custom resource.
+This resources installs Micro Focus Server Express and License Manager, installs the license using the specified details, then enables and starts the License Manager service.
 
 Requirements
 ------------
@@ -28,17 +29,30 @@ The default recipe is blank because this is a resource cookbook.
 
 Resources
 ---------
+Define a `microfocus_server_express` resource in your recipe to install Micro Focus Server Express and License Manager.  E.g.
 
-Define a `microfocus_server_express` resource in your recipe to install Micro Focus Server Express.
+    microfocus_server_express '/opt/microfocus/cobol' do
+      checksum 'sha-256_checksum'
+      license_number 'license_number'
+      serial_number 'serial_number'
+      url 'http://artifacts.local.org/microfocus/server-express/sx51_wp11_redhat_x86_64_dev.tar'
+    end
+
+#### Properties
+- `name` (required) - the resource name is the full path where Server Express will be installed.
+- `checksum` (optional) - SHA-256 checksum for the Server Express archive.
+- `license_number` (required) - Server Express license number.
+- `serial_number` (required) - Server Express serial number.
+- `url` (required) - URL for the Server Express archive.
 
 Contributing
 ------------
-1. Fork the repository on Github.
+1. Fork the repository on GitHub.
 2. Create a named feature branch (like `add_component_x`).
 3. Write your change.
 4. Write tests for your change (this cookbook currently uses InSpec with Test Kitchen).
 5. Run the tests, ensuring they all pass.
-6. Submit a Pull Request using Github.
+6. Submit a Pull Request using GitHub.
 
 License and Authors
 -------------------
