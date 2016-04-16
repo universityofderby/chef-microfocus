@@ -22,13 +22,12 @@ default_action :create
 
 property :checksum, String
 property :group, String, default: 'root'
-property :license_manager_dir, default: 'mflmf'
+property :license_manager_path, default: '/opt/microfocus/mflmf'
 property :license_number, String, required: true
 property :mode, Integer, default: 0755
 property :owner, String, default: 'root'
-property :path, String, default: '/opt/microfocus'
 property :serial_number, String, required: true
-property :server_express_dir, default: 'cobol'
+property :server_express_path, default: '/opt/microfocus/cobol'
 property :url, String, required: true
 property :install_responses, Array, default: lazy {
   [{ '\(y\/n\)' => "y\n" }, # 1. Do you wish to continue (y/n):
@@ -38,7 +37,7 @@ property :install_responses, Array, default: lazy {
    { '\(y\/n\)' => "y\n" }, # 5. Please confirm your understanding of the above reference environment details (y/n):
    { '\(y\/n\)' => "n\n" }, # 6. Do you want to make use of COBOL and Java working together? (y/n):
    { '\(y\/n\)' => "y\n" }, # 7. Would you like to install LMF now? (y/n):
-   { 'Press Enter for default directory' => "#{::File.join(path, license_manager_dir)}\n" }, # 8. Enter the directory name where you wish to install License Manager
+   { 'Press Enter for default directory' => "#{license_manager_path}\n" }, # 8. Enter the directory name where you wish to install License Manager
    { '\(y\/n\)' => "y\n" }, # 9. do you wish to create it ? (y/n)
    { '\(y\/n\)' => "y\n" }, # 10. Do you want only superuser to be able to access the License Admin System? (y/n)
    { '\(y\/n\)' => "y\n" }, # 11. Do you want license manager to be automatically started at boot time? (y/n)
@@ -66,8 +65,8 @@ action :create do
     package p
   end
 
-  # create parent directory
-  directory new_resource.path do
+  # create base directory
+  directory ::File.basename(new_resource.server_express_path) do
     owner new_resource.owner
     group new_resource.group
     mode new_resource.mode
@@ -75,15 +74,15 @@ action :create do
   end
 
   # extract server express archive
-  ark new_resource.server_express_dir do
-    path new_resource.path
+  ark ::File.basename(new_resource.server_express_path) do
+    path ::File.dirname(new_resource.server_express_path)
     url new_resource.url
     checksum new_resource.checksum unless new_resource.checksum.nil?
     owner new_resource.owner
     group new_resource.group
     mode new_resource.mode
     strip_components 0
-    not_if { ::File.exist?(::File.join(new_resource.path, new_resource.server_express_dir)) }
+    not_if { ::File.exist?(new_resource.server_express_path) }
     notifies :run, 'ruby_block[install]', :immediately
     notifies :run, 'ruby_block[mflmcmd]', :immediately
     action :put
@@ -92,7 +91,7 @@ action :create do
   # execute server express install
   ruby_block 'install' do
     block do
-      install = Greenletters::Process.new(::File.join(new_resource.path, new_resource.server_express_dir, 'install'), transcript: $stdout, timeout: 300)
+      install = Greenletters::Process.new(::File.join(new_resource.server_express_path, 'install'), transcript: $stdout, timeout: 300)
       install.on(:output, /--more--/i) do
         install << ' '
       end
@@ -105,14 +104,14 @@ action :create do
       end
       install.wait_for(:exit)
     end
-    only_if { ::File.exist?(::File.join(new_resource.path, new_resource.server_express_dir, 'install')) }
+    only_if { ::File.exist?(::File.join(new_resource.server_express_path, 'install')) }
     action :nothing
   end
 
   # execute mflmcmd to install license
   ruby_block 'mflmcmd' do
     block do
-      mflmcmd = Greenletters::Process.new("cd #{::File.join(new_resource.path, new_resource.license_manager_dir)};./mflmcmd", transcript: $stdout, timeout: 300)
+      mflmcmd = Greenletters::Process.new("cd #{new_resource.license_manager_path};./mflmcmd", transcript: $stdout, timeout: 300)
       mflmcmd.start!
       new_resource.mflmcmd_responses.each do |r|
         r.each do |p, i|
@@ -122,7 +121,7 @@ action :create do
       end
       mflmcmd.wait_for(:exit)
     end
-    only_if { ::File.exist?(::File.join(new_resource.path, new_resource.license_manager_dir, 'mflmcmd')) }
+    only_if { ::File.exist?(::File.join(new_resource.license_manager_path, 'mflmcmd')) }
     action :nothing
   end
 
@@ -133,7 +132,7 @@ action :create do
     mode 0755
     owner 'root'
     group 'root'
-    variables(license_manager_path: ::File.join(new_resource.path, new_resource.license_manager_dir))
+    variables(license_manager_path: new_resource.license_manager_path)
     action :create_if_missing
   end
 
