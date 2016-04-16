@@ -27,7 +27,7 @@ property :license_number, String, required: true
 property :mode, Integer, default: 0755
 property :owner, String, default: 'root'
 property :serial_number, String, required: true
-property :server_express_path, name_property: true, default: '/opt/microfocus/cobol'
+property :server_express_path, name_property: true # default: '/opt/microfocus/cobol'
 property :url, String, required: true
 property :install_responses, Array, default: lazy {
   [{ '\(y\/n\)' => "y\n" }, # 1. Do you wish to continue (y/n):
