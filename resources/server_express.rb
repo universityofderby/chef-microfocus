@@ -41,7 +41,7 @@ property :install_responses, Array, default: lazy {
    { 'Press Enter for default directory' => "#{::File.join(path, license_manager_dir)}\n" }, # 8. Enter the directory name where you wish to install License Manager
    { '\(y\/n\)' => "y\n" }, # 9. do you wish to create it ? (y/n)
    { '\(y\/n\)' => "y\n" }, # 10. Do you want only superuser to be able to access the License Admin System? (y/n)
-   { '\(y\/n\)' => "n\n" }, # 11. Do you want license manager to be automatically started at boot time? (y/n)
+   { '\(y\/n\)' => "y\n" }, # 11. Do you want license manager to be automatically started at boot time? (y/n)
    { 'Please enter either 32 or 64 to set the system default mode:' => "64\n" }, # 12. Please enter either 32 or 64 to set the system default mode:
    { '\(y\/n\)' => "n\n" } # 13. Do you wish to configure Enterprise Server now? (y/n):
   ]

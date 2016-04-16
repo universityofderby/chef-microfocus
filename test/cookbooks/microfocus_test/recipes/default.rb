@@ -18,6 +18,7 @@
 #
 
 microfocus_server_express '/opt/microfocus' do
+  checksum node['microfocus']['server_express']['checksum']
   license_number node['microfocus']['server_express']['license_number']
   serial_number node['microfocus']['server_express']['serial_number']
   url node['microfocus']['server_express']['url']
