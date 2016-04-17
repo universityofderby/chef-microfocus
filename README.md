@@ -1,7 +1,7 @@
 microfocus chef cookbook
-=====================
-The `microfocus` cookbook provides the `microfocus_server_express` custom resource.
-This resources installs Micro Focus Server Express and License Manager, installs the license using the specified details, then enables and starts the License Manager service.
+========================
+The `microfocus` cookbook provides the `microfocus_server_express` resource.
+This resource installs Micro Focus Server Express and License Manager, installs the specified license, then enables and starts the License Manager service.
 
 Requirements
 ------------
@@ -12,38 +12,45 @@ Requirements
 Platform Support
 ----------------
 The following platforms have been tested with Test Kitchen:
-- CentOS
-- Red Hat
+- centos-6
+- centos-7
 
 Usage
 -----
-#### metadata.rb
 Include `microfocus` as a dependency in your cookbook's `metadata.rb`.
 
 ```
-depends 'microfocus', '= 2.0.0'
+depends 'microfocus', '~> 2.0'
 ```
-
-#### microfocus::default
-The default recipe is blank because this is a resource cookbook.
 
 Resources
 ---------
-Define a `microfocus_server_express` resource in your recipe to install Micro Focus Server Express and License Manager.  E.g.
+Define a `microfocus_server_express` resource in your recipe. E.g.
 
     microfocus_server_express '/opt/microfocus/cobol' do
-      checksum 'sha-256_checksum'
+      checksum 'ec833c62bdb63f48b7bf7b83b0100e0c82317f9653096d03ba2c9be27a0f6ebd'
       license_number 'license_number'
       serial_number 'serial_number'
       url 'http://artifacts.local.org/microfocus/server-express/sx51_wp11_redhat_x86_64_dev.tar'
     end
 
 #### Properties
-- `name` (required) - the resource name is the full path where Server Express will be installed.
-- `checksum` (optional) - SHA-256 checksum for the Server Express archive.
-- `license_number` (required) - Server Express license number.
-- `serial_number` (required) - Server Express serial number.
-- `url` (required) - URL for the Server Express archive.
+- `checksum` - SHA-256 checksum for the Server Express archive.
+- `group` - group for the Server Express directory (default: 'root').
+- `install_responses` - array of hashes (pattern to match and input value) to override the default install responses.
+- `license_manager_path` - full path to install License Manager (default: '/opt/microfocus/mflmf').
+- `license_number` - Server Express license number (required: true).
+- `mflmcmd_responses` - array of hashes (pattern to match and input value) to override the default mflmcmd responses.
+- `mode` - mode for the Server Express directory (default: 0755).
+- `owner` - owner for the Server Express directory (default: 'root').
+- `serial_number` - Server Express serial number (required: true).
+- `server_express_path` - full path to install Server Express (name_property: true, recommended default: '/opt/microfocus/cobol').
+- `url` - URL for the Server Express archive (required: true).
+
+Recipes
+-------
+#### microfocus::default
+The default recipe is blank.
 
 Contributing
 ------------
