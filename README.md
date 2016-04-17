@@ -19,20 +19,23 @@ Usage
 -----
 Include `microfocus` as a dependency in your cookbook's `metadata.rb`.
 
-```
+```ruby
 depends 'microfocus', '~> 2.0'
 ```
 
 Resources
 ---------
+### microfocus_server_express
 Define a `microfocus_server_express` resource in your recipe. E.g.
 
-    microfocus_server_express '/opt/microfocus/cobol' do
-      checksum 'ec833c62bdb63f48b7bf7b83b0100e0c82317f9653096d03ba2c9be27a0f6ebd'
-      license_number 'license_number'
-      serial_number 'serial_number'
-      url 'http://artifacts.local.org/microfocus/server-express/sx51_wp11_redhat_x86_64_dev.tar'
-    end
+```ruby
+microfocus_server_express '/opt/microfocus/cobol' do
+  checksum 'ec833c62bdb63f48b7bf7b83b0100e0c82317f9653096d03ba2c9be27a0f6ebd'
+  license_number 'license_number'
+  serial_number 'serial_number'
+  url 'http://artifacts.local.org/microfocus/server-express/sx51_wp11_redhat_x86_64_dev.tar'
+end
+```
 
 #### Properties
 - `checksum` - SHA-256 checksum for the Server Express archive.
@@ -46,6 +49,9 @@ Define a `microfocus_server_express` resource in your recipe. E.g.
 - `serial_number` - Server Express serial number (required: true).
 - `server_express_path` - full path to install Server Express (name_property: true, recommended default: '/opt/microfocus/cobol').
 - `url` - URL for the Server Express archive (required: true).
+
+#### Actions
+- `:create` - installs Micro Focus Server Express and License Manager, installs the specified license, then enables and starts the License Manager service.
 
 Recipes
 -------
