@@ -30,21 +30,22 @@ end
   end
 end
 
-# license manager init.d script
-describe file('/etc/rc.d/init.d/mflm_manager') do
-  its(:content) { should match(%r{sh \/etc\/mflmrcscript > \/dev\/null 2>&1}) }
+# license manager startup script
+describe file('/etc/mflmrcscript') do
+  its(:content) { should match(%r{cd \/opt\/microfocus\/mflmf}) }
+  its(:content) { should match(%r{\.\/mflm_manager}) }
   its(:owner) { should eq 'root' }
   its(:group) { should eq 'root' }
   its(:mode) { should eq 0755 }
 end
 
 # license manager service
-describe service('mflm_manager') do
+describe service('mflm') do
   it { should be_installed }
   it { should be_running }
 end
 
-describe service('mflm_manager').runlevels(2, 3, 4, 5) do
+describe service('mflm').runlevels(2, 3, 4, 5) do
   it { should be_enabled }
 end
 

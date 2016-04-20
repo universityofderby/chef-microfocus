@@ -4,11 +4,12 @@ maintainer_email 'serverteam@derby.ac.uk'
 license 'Apache 2.0'
 description 'Provides microfocus_server_express resource'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version '2.0.1'
+version '2.1.0'
 source_url 'https://github.com/universityofderby/chef-microfocus' if respond_to?(:source_url)
 issues_url 'https://github.com/universityofderby/chef-microfocus/issues' if respond_to?(:issues_url)
 
 depends 'ark', '~> 1.0'
+depends 'systemd', '~> 2.0'
 
 supports 'centos'
 supports 'redhat'
