@@ -40,7 +40,7 @@ property :install_responses, Array, default: lazy {
    { 'Press Enter for default directory' => "#{license_manager_path}\n" }, # 8. Enter the directory name where you wish to install License Manager
    { '\(y\/n\)' => "y\n" }, # 9. do you wish to create it ? (y/n)
    { '\(y\/n\)' => "y\n" }, # 10. Do you want only superuser to be able to access the License Admin System? (y/n)
-   { '\(y\/n\)' => "y\n" }, # 11. Do you want license manager to be automatically started at boot time? (y/n)
+   { '\(y\/n\)' => "n\n" }, # 11. Do you want license manager to be automatically started at boot time? (y/n)
    { 'Please enter either 32 or 64 to set the system default mode:' => "64\n" }, # 12. Please enter either 32 or 64 to set the system default mode:
    { '\(y\/n\)' => "n\n" } # 13. Do you wish to configure Enterprise Server now? (y/n):
   ]
@@ -125,9 +125,9 @@ action :create do
     action :nothing
   end
 
-  # license manager init.d script
-  template '/etc/rc.d/init.d/mflm_manager' do
-    source 'mflm_manager.erb'
+  # license manager startup script
+  template '/etc/mflmrcscript' do
+    source '/etc/mflmrcscript.erb'
     cookbook 'microfocus'
     mode 0755
     owner 'root'
@@ -135,8 +135,33 @@ action :create do
     variables(license_manager_path: license_manager_path)
   end
 
+  # license manager systemd service
+  systemd_service 'mflm' do
+    description 'Micro Focus License Manager'
+    install do
+      wanted_by 'multi-user.target'
+    end
+    service do
+      exec_start '/etc/mflmrcscript'
+      exec_stop ::File.join(license_manager_path, 'lmfgetpv k')
+      type 'forking'
+    end
+    only_if { IO.read('/proc/1/comm').chomp == 'systemd' }
+  end
+
+  # license manager init.d script
+  template '/etc/init.d/mflm' do
+    source '/etc/init.d/mflm.erb'
+    cookbook 'microfocus'
+    mode 0755
+    owner 'root'
+    group 'root'
+    variables(license_manager_path: license_manager_path)
+    only_if { IO.read('/proc/1/comm').chomp != 'systemd' }
+  end
+
   # license manager service
-  service 'mflm_manager' do
+  service 'mflm' do
     supports restart: true, status: true
     action [:enable, :start]
   end

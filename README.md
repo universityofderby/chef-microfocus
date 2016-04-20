@@ -15,12 +15,18 @@ The following platforms have been tested with Test Kitchen:
 - centos-6
 - centos-7
 
+Dependencies
+------------
+This cookbook depends on the following cookbooks.
+- `ark`
+- `systemd`
+
 Usage
 -----
 Include `microfocus` as a dependency in your cookbook's `metadata.rb`.
 
 ```ruby
-depends 'microfocus', '~> 2.0'
+depends 'microfocus', '~> 2.1'
 ```
 
 Resources

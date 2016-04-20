@@ -1,0 +1,8 @@
+#!/bin/sh
+echo Starting MFLM License Manager
+COBDIR=<%= @license_manager_path %>
+export COBDIR
+LD_LIBRARY_PATH=$COBDIR/lib:$LD_LIBRARY_PATH:/lib
+export LD_LIBRARY_PATH
+cd <%= @license_manager_path %>
+./mflm_manager
