@@ -1,5 +1,8 @@
 microfocus chef cookbook
 ========================
+
+[![Build Status](https://travis-ci.org/universityofderby/chef-microfocus.svg?branch=master)](https://travis-ci.org/universityofderby/chef-microfocus)
+
 The `microfocus` cookbook provides the `microfocus_server_express` resource.
 This resource installs Micro Focus Server Express and License Manager, installs the specified license, then enables and starts the License Manager service.
 

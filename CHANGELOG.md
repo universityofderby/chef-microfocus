@@ -1,6 +1,10 @@
 microfocus cookbook CHANGELOG
 =============================
 
+2.1.1 (2016-04-22)
+------------------
+- Added Travis CI build status
+
 2.1.0 (2016-04-20)
 ------------------
 - Updated microfocus_server_express resource to manually install init.d/systemd service
