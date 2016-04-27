@@ -127,7 +127,7 @@ action :create do
 
   # license manager startup script
   template '/etc/mflmrcscript' do
-    source '/etc/mflmrcscript.erb'
+    source 'etc/mflmrcscript.erb'
     cookbook 'microfocus'
     mode 0755
     owner 'root'
@@ -151,7 +151,7 @@ action :create do
 
   # license manager init.d script
   template '/etc/init.d/mflm' do
-    source '/etc/init.d/mflm.erb'
+    source 'etc/init.d/mflm.erb'
     cookbook 'microfocus'
     mode 0755
     owner 'root'

@@ -1,6 +1,10 @@
 microfocus cookbook CHANGELOG
 =============================
 
+2.1.2 (2016-04-27)
+------------------
+- Removed leading / from template resources source property
+
 2.1.1 (2016-04-22)
 ------------------
 - Added Travis CI build status
