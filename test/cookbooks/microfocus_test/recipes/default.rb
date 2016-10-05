@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-microfocus_server_express '/opt/microfocus/cobol' do
+microfocus_server_express node['microfocus']['server_express']['version'] do
   checksum node['microfocus']['server_express']['checksum']
   license_number node['microfocus']['server_express']['license_number']
   serial_number node['microfocus']['server_express']['serial_number']

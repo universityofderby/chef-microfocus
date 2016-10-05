@@ -29,7 +29,7 @@ Usage
 Include `microfocus` as a dependency in your cookbook's `metadata.rb`.
 
 ```ruby
-depends 'microfocus', '~> 2.1'
+depends 'microfocus', '~> 3.0.0'
 ```
 
 Resources
@@ -38,7 +38,7 @@ Resources
 Define a `microfocus_server_express` resource in your recipe. E.g.
 
 ```ruby
-microfocus_server_express '/opt/microfocus/cobol' do
+microfocus_server_express '5.1wp11' do
   checksum 'ec833c62bdb63f48b7bf7b83b0100e0c82317f9653096d03ba2c9be27a0f6ebd'
   license_number 'license_number'
   serial_number 'serial_number'
@@ -53,19 +53,15 @@ end
 - `license_manager_path` - full path to install License Manager (default: '/opt/microfocus/mflmf').
 - `license_number` - Server Express license number (required: true).
 - `mflmcmd_responses` - array of hashes (pattern to match and input value) to override the default mflmcmd responses.
-- `mode` - mode for the Server Express directory (default: 0755).
+- `mode` - mode for the Server Express directory (default: 0o755).
 - `owner` - owner for the Server Express directory (default: 'root').
 - `serial_number` - Server Express serial number (required: true).
-- `server_express_path` - full path to install Server Express (name_property: true, recommended default: '/opt/microfocus/cobol').
+- `server_express_path` - full path to install Server Express (default: '/opt/microfocus/cobol').
 - `url` - URL for the Server Express archive (required: true).
+- `version` - Server Express version (name_property: true).
 
 #### Actions
 - `:create` - installs Micro Focus Server Express and License Manager, installs the specified license, then enables and starts the License Manager service.
-
-Recipes
--------
-#### microfocus::default
-The default recipe is blank.
 
 Contributing
 ------------

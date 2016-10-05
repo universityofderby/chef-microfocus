@@ -15,7 +15,7 @@ platforms:
 suites:
   - name: default
     run_list:
-      - recipe[microfocus_test]
+      - recipe[microfocus_test::default]
     attributes:
       microfocus:
         server_express:
@@ -23,3 +23,4 @@ suites:
           license_number: <%= ENV['MICROFOCUS_SERVER_EXPRESS_LICENSE_NUMBER'] %>
           serial_number: <%= ENV['MICROFOCUS_SERVER_EXPRESS_SERIAL_NUMBER'] %>
           url: <%= ENV['MICROFOCUS_SERVER_EXPRESS_URL'] %>
+          version: 5.1wp11
