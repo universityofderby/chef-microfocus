@@ -6,9 +6,10 @@
 end
 
 # microfocus directories
-{ '/opt/microfocus' => 0755,
-  '/opt/microfocus/cobol' => 0755,
-  '/opt/microfocus/mflmf' => 0700
+{
+  '/opt/microfocus' => '0755',
+  '/opt/microfocus/cobol' => '0755',
+  '/opt/microfocus/mflmf' => '0700'
 }.each do |f, m|
   describe file(f) do
     it { should be_directory }
@@ -19,9 +20,10 @@ end
 end
 
 # microfocus files
-{ '/opt/microfocus/cobol/install' => 0555,
-  '/opt/microfocus/mflmf/mflmcmd' => 0555,
-  '/opt/microfocus/mflmf/mflm_manager' => 0544
+{
+  '/opt/microfocus/cobol/install' => '0555',
+  '/opt/microfocus/mflmf/mflmcmd' => '0555',
+  '/opt/microfocus/mflmf/mflm_manager' => '0544'
 }.each do |f, m|
   describe file(f) do
     its(:owner) { should eq 'root' }

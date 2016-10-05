@@ -24,31 +24,33 @@ property :checksum, String
 property :group, String, default: 'root'
 property :license_manager_path, default: '/opt/microfocus/mflmf'
 property :license_number, String, required: true
-property :mode, Integer, default: 0755
+property :mode, String, default: '0755'
 property :owner, String, default: 'root'
 property :serial_number, String, required: true
 property :server_express_path, name_property: true # default: '/opt/microfocus/cobol'
 property :url, String, required: true
 property :install_responses, Array, default: lazy {
-  [{ '\(y\/n\)' => "y\n" }, # 1. Do you wish to continue (y/n):
-   { '\(y\/n\)' => "y\n" }, # 2. Do you agree to the terms of the License Agreement? (y/n):
-   { '\(y\/n\)' => "y\n" }, # 3. Please confirm that you want to continue with this installation (y/n):
-   { 'Please press return when you are ready:' => "\n" }, # 4. Please press return when you are ready:
-   { '\(y\/n\)' => "y\n" }, # 5. Please confirm your understanding of the above reference environment details (y/n):
-   { '\(y\/n\)' => "n\n" }, # 6. Do you want to make use of COBOL and Java working together? (y/n):
-   { '\(y\/n\)' => "y\n" }, # 7. Would you like to install LMF now? (y/n):
-   { 'Press Enter for default directory' => "#{license_manager_path}\n" }, # 8. Enter the directory name where you wish to install License Manager
-   { '\(y\/n\)' => "y\n" }, # 9. do you wish to create it ? (y/n)
-   { '\(y\/n\)' => "y\n" }, # 10. Do you want only superuser to be able to access the License Admin System? (y/n)
-   { '\(y\/n\)' => "n\n" }, # 11. Do you want license manager to be automatically started at boot time? (y/n)
-   { 'Please enter either 32 or 64 to set the system default mode:' => "64\n" }, # 12. Please enter either 32 or 64 to set the system default mode:
-   { '\(y\/n\)' => "n\n" } # 13. Do you wish to configure Enterprise Server now? (y/n):
+  [
+    { '\(y\/n\)' => "y\n" }, # 1. Do you wish to continue (y/n):
+    { '\(y\/n\)' => "y\n" }, # 2. Do you agree to the terms of the License Agreement? (y/n):
+    { '\(y\/n\)' => "y\n" }, # 3. Please confirm that you want to continue with this installation (y/n):
+    { 'Please press return when you are ready:' => "\n" }, # 4. Please press return when you are ready:
+    { '\(y\/n\)' => "y\n" }, # 5. Please confirm your understanding of the above reference environment details (y/n):
+    { '\(y\/n\)' => "n\n" }, # 6. Do you want to make use of COBOL and Java working together? (y/n):
+    { '\(y\/n\)' => "y\n" }, # 7. Would you like to install LMF now? (y/n):
+    { 'Press Enter for default directory' => "#{license_manager_path}\n" }, # 8. Enter the directory name where you wish to install License Manager
+    { '\(y\/n\)' => "y\n" }, # 9. do you wish to create it ? (y/n)
+    { '\(y\/n\)' => "y\n" }, # 10. Do you want only superuser to be able to access the License Admin System? (y/n)
+    { '\(y\/n\)' => "n\n" }, # 11. Do you want license manager to be automatically started at boot time? (y/n)
+    { 'Please enter either 32 or 64 to set the system default mode:' => "64\n" }, # 12. Please enter either 32 or 64 to set the system default mode:
+    { '\(y\/n\)' => "n\n" } # 13. Do you wish to configure Enterprise Server now? (y/n):
   ]
 }
 property :mflmcmd_responses, Array, default: lazy {
-  [{ 'License' => "I\n" }, # 1. Select the function you require from the list:
-   { 'Serial Number' => "#{serial_number}\n" }, # 2. Enter the Serial Number part of the License Key:
-   { 'License Number' => "#{license_number}\n" } # 3. Enter the License Number part of the License Key:
+  [
+    { 'License' => "I\n" }, # 1. Select the function you require from the list:
+    { 'Serial Number' => "#{serial_number}\n" }, # 2. Enter the Serial Number part of the License Key:
+    { 'License Number' => "#{license_number}\n" } # 3. Enter the License Number part of the License Key:
   ]
 }
 
@@ -129,7 +131,7 @@ action :create do
   template '/etc/mflmrcscript' do
     source 'etc/mflmrcscript.erb'
     cookbook 'microfocus'
-    mode 0755
+    mode '0755'
     owner 'root'
     group 'root'
     variables(license_manager_path: license_manager_path)
@@ -153,7 +155,7 @@ action :create do
   template '/etc/init.d/mflm' do
     source 'etc/init.d/mflm.erb'
     cookbook 'microfocus'
-    mode 0755
+    mode '0755'
     owner 'root'
     group 'root'
     variables(license_manager_path: license_manager_path)
