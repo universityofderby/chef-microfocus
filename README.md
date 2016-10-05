@@ -29,7 +29,7 @@ Usage
 Include `microfocus` as a dependency in your cookbook's `metadata.rb`.
 
 ```ruby
-depends 'microfocus', '~> 2.1'
+depends 'microfocus', '~> 2.2.0'
 ```
 
 Resources
@@ -61,11 +61,6 @@ end
 
 #### Actions
 - `:create` - installs Micro Focus Server Express and License Manager, installs the specified license, then enables and starts the License Manager service.
-
-Recipes
--------
-#### microfocus::default
-The default recipe is blank.
 
 Contributing
 ------------

@@ -15,7 +15,7 @@ platforms:
 suites:
   - name: default
     run_list:
-      - recipe[microfocus_test]
+      - recipe[microfocus_test::default]
     attributes:
       microfocus:
         server_express:
