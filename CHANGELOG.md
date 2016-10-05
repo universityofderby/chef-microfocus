@@ -1,9 +1,9 @@
 microfocus cookbook CHANGELOG
 =============================
 
-2.2.0 (2016-10-05)
+3.0.0 (2016-10-05)
 ------------------
-- Updated constraint for ark cookbook to ~> 2.0.  Removed default recipe.
+- Updated constraint for ark cookbook to ~> 2.0. version is now name_property. Removed default recipe.
 
 2.1.2 (2016-04-27)
 ------------------

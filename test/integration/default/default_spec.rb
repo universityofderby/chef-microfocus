@@ -7,9 +7,9 @@ end
 
 # microfocus directories
 {
-  '/opt/microfocus' => '0755',
-  '/opt/microfocus/cobol' => '0755',
-  '/opt/microfocus/mflmf' => '0700'
+  '/opt/microfocus' => 0o755,
+  '/opt/microfocus/cobol' => 0o755,
+  '/opt/microfocus/mflmf' => 0o700
 }.each do |f, m|
   describe file(f) do
     it { should be_directory }
@@ -21,9 +21,9 @@ end
 
 # microfocus files
 {
-  '/opt/microfocus/cobol/install' => '0555',
-  '/opt/microfocus/mflmf/mflmcmd' => '0555',
-  '/opt/microfocus/mflmf/mflm_manager' => '0544'
+  '/opt/microfocus/cobol/install' => 0o555,
+  '/opt/microfocus/mflmf/mflmcmd' => 0o555,
+  '/opt/microfocus/mflmf/mflm_manager' => 0o544
 }.each do |f, m|
   describe file(f) do
     its(:owner) { should eq 'root' }
@@ -38,7 +38,7 @@ describe file('/etc/mflmrcscript') do
   its(:content) { should match(%r{\.\/mflm_manager}) }
   its(:owner) { should eq 'root' }
   its(:group) { should eq 'root' }
-  its(:mode) { should eq 0755 }
+  its(:mode) { should eq 0o755 }
 end
 
 # license manager service
