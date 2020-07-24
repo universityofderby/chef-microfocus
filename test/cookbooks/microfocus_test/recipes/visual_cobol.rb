@@ -1,8 +1,8 @@
 #
 # Cookbook Name:: microfocus_test
-# Recipe:: default
+# Recipe:: visual_cobol
 #
-# Copyright 2016 University of Derby
+# Copyright 2020 University of Derby
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 # limitations under the License.
 #
 
-microfocus_server_express node['microfocus']['server_express']['version'] do
-  checksum node['microfocus']['server_express']['checksum']
-  license_number node['microfocus']['server_express']['license_number']
-  serial_number node['microfocus']['server_express']['serial_number']
-  url node['microfocus']['server_express']['url']
+microfocus_visual_cobol 'visual_cobol' do
+  visual_cobol_checksum node['microfocus']['visual_cobol']['visual_cobol_checksum']
+  visual_cobol_url node['microfocus']['visual_cobol']['visual_cobol_url']
+  visual_cobol_license_checksum node['microfocus']['visual_cobol']['visual_cobol_license_checksum']
+  visual_cobol_license_url node['microfocus']['visual_cobol']['visual_cobol_license_url']
 end
