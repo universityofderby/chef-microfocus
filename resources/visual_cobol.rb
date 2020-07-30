@@ -24,24 +24,18 @@ property :group, String, default: 'root'
 property :mode, Integer, default: 0o775
 property :owner, String, default: 'root'
 property :visual_cobol_checksum, String
+property :visual_cobol_install_path_cob, String, default: '/opt/microfocus/VisualCOBOL/bin/cob'
 property :visual_cobol_license_checksum, String
-property :visual_cobol_setup_path, default: '/tmp/setup_visualcobol'
-property :visual_cobol_license_path, default: '/tmp/PS-VC-30DAY'
-property :visual_cobol_url, String, required: true
+property :visual_cobol_license_install_tool, String, default: '/var/microfocuslicensing/bin/cesadmintool.sh'
+property :visual_cobol_license_path, String, default: '/opt/microfocus/VisualCOBOL/etc/PS-VC-30DAY'
 property :visual_cobol_license_url, String, required: true
-
-property :visual_cobol_params, Array, default: lazy {
-  [
-    { 'Install type' => "-silent" + " " },
-    { 'IacceptEULA' => "-IacceptEULA" + " " }, # Do you agree to the terms of the License Agreement? (y/n):
-    { 'Platform check' => "-noplatformcheck" }
-  ]
-}
+property :visual_cobol_setup_path, String, default: '/tmp/setup_visualcobol'
+property :visual_cobol_url, String, required: true
+property :install_log_path, String, default: '/opt/microfocus/logs/install.log'
 
 # default action :create
 action :create do
-
-  # install required packages glibc-devel.i686
+  # install required packages
   %w(glibc-devel.i686 ed pax xterm).each do |p|
     package p
   end
@@ -54,13 +48,14 @@ action :create do
     group new_resource.group
     mode new_resource.mode
     action :create
+    not_if { ::File.exist?(new_resource.visual_cobol_setup_path) }
   end
 
   # install visual cobol
   execute 'visual_cobol_install' do
-    command '/tmp/setup_visualcobol -silent -IacceptEULA -noplatformcheck'
+    command "#{new_resource.visual_cobol_setup_path} -silent -IacceptEULA -noplatformcheck"
+    not_if { ::File.exist?(new_resource.visual_cobol_install_path_cob) }
   end
-  # /tmp/setup_visualcobol_devhub_4.0_patchupdate04_196243_redhat_x86_64 -silent -IacceptEULA -noplatformcheck
 
   # copy license file to target
   remote_file new_resource.visual_cobol_license_path do
@@ -70,13 +65,12 @@ action :create do
     group new_resource.group
     mode new_resource.mode
     action :create
+    not_if { ::File.exist?(new_resource.visual_cobol_license_path) }
   end
 
-  # jdk required for below
-
-  # install license admin
-  #execute 'visual_cobol_license_install' do
-  #  command '/var/microfocuslicensing/bin/cesadmintool.sh -install /tmp/PS-VC-30DAY'
-  #end
-
+  # install license
+  execute 'visual_cobol_license_install' do
+    command "#{new_resource.visual_cobol_license_install_tool} -install #{new_resource.visual_cobol_license_path}"
+    not_if "/var/microfocuslicensing/bin/lsmon | grep '/var/microfocuslicensing/bin/lservrc\.net'"
+  end
 end

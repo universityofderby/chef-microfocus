@@ -16,6 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+package 'java-1.8.0-openjdk'
 
 microfocus_visual_cobol 'visual_cobol' do
   visual_cobol_checksum node['microfocus']['visual_cobol']['visual_cobol_checksum']
