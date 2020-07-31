@@ -1,5 +1,5 @@
 # packages
-%w(glibc-devel.i686 ed pax xterm).each do |p|
+%w[glibc-devel.i686 ed pax xterm].each do |p|
   describe package(p) do
     it { should be_installed }
   end
@@ -17,16 +17,16 @@ end
   end
 end
 
-%w(lserv mfcesd).each do |p|
+%w[lserv mfcesd].each do |p|
   describe processes(p) do
     it { should exist }
   end
 end
 
 describe command('/var/microfocuslicensing/bin/lsmon') do
-   its('stdout') { should match (/\/var\/microfocuslicensing\/bin\/lservrc.net/) }
+  its('stdout') { should match (/\/var\/microfocuslicensing\/bin\/lservrc.net/) }
 end
 
 describe command('/var/microfocuslicensing/bin/lsmon') do
-   its('stdout') { should match (/Active/) }
+  its('stdout') { should match (/Active/) }
 end

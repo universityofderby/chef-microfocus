@@ -35,8 +35,7 @@ property :install_log_path, String, default: '/opt/microfocus/logs/install.log'
 
 # default action :create
 action :create do
-  # install required packages
-  %w(glibc-devel.i686 ed pax xterm).each do |p|
+  %w[glibc-devel.i686 ed pax xterm].each do |p|
     package p
   end
 
