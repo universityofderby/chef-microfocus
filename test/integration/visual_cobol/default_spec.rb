@@ -1,5 +1,5 @@
 # packages
-%w[glibc-devel.i686 ed pax xterm].each do |p|
+%w[glibc libgcc libstdc++ glibc-devel.i686 gcc ed pax xterm].each do |p|
   describe package(p) do
     it { should be_installed }
   end
