@@ -24,10 +24,10 @@ property :group, String, default: 'root'
 property :mode, Integer, default: 0o775
 property :owner, String, default: 'root'
 property :visual_cobol_checksum, String
-property :visual_cobol_install_path_cob, String, default: '/opt/microfocus/VisualCOBOL/bin/cob'
+property :visual_cobol_install_path, String, default: '/opt/microfocus/VisualCOBOL'
 property :visual_cobol_license_checksum, String
 property :visual_cobol_license_install_tool, String, default: '/var/microfocuslicensing/bin/cesadmintool.sh'
-property :visual_cobol_license_path, String, default: '/opt/microfocus/VisualCOBOL/etc/PS-VC-UNIX-Linux'
+property :visual_cobol_license_path, String, default: lazy {"#{visual_cobol_install_path}/etc/PS-VC-UNIX-Linux"}
 property :visual_cobol_license_url, String, required: true
 property :visual_cobol_setup_path, String, default: '/tmp/setup_visualcobol'
 property :visual_cobol_url, String, required: true
@@ -52,7 +52,7 @@ action :create do
   # install visual cobol
   execute 'visual_cobol_install' do
     command "#{new_resource.visual_cobol_setup_path} -silent -IacceptEULA -noplatformcheck"
-    not_if { ::File.exist?(new_resource.visual_cobol_install_path_cob) }
+    not_if { ::File.exist?(::File.join(new_resource.visual_cobol_install_path, 'bin/cob')) }
   end
 
   # copy license file to target

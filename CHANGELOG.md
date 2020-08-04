@@ -1,6 +1,10 @@
 microfocus cookbook CHANGELOG
 =============================
 
+3.1.0 (2020-08-04)
+------------------
+- Added microfocus_visual_cobol resource.
+
 3.0.0 (2016-10-05)
 ------------------
 - Updated constraint for ark cookbook to ~> 2.0. version is now name_property. Removed default recipe.
