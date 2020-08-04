@@ -27,11 +27,10 @@ property :visual_cobol_checksum, String
 property :visual_cobol_install_path_cob, String, default: '/opt/microfocus/VisualCOBOL/bin/cob'
 property :visual_cobol_license_checksum, String
 property :visual_cobol_license_install_tool, String, default: '/var/microfocuslicensing/bin/cesadmintool.sh'
-property :visual_cobol_license_path, String, default: '/opt/microfocus/VisualCOBOL/etc/PS-VC-30DAY'
+property :visual_cobol_license_path, String, default: '/opt/microfocus/VisualCOBOL/etc/PS-VC-UNIX-Linux'
 property :visual_cobol_license_url, String, required: true
 property :visual_cobol_setup_path, String, default: '/tmp/setup_visualcobol'
 property :visual_cobol_url, String, required: true
-property :install_log_path, String, default: '/opt/microfocus/logs/install.log'
 
 # default action :create
 action :create do

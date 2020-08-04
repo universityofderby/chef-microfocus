@@ -6,14 +6,11 @@
 end
 
 # microfocus visual cobol directories
-{
-  '/opt/microfocus/VisualCOBOL/bin/cob' => 0o555,
-  '/var/microfocuslicensing/bin/cesadmintool.sh' => 0o555
-}.each do |f, m|
+%w[/opt/microfocus/VisualCOBOL/bin/cob /var/microfocuslicensing/bin/cesadmintool.sh].each do |f|
   describe file(f) do
     its(:owner) { should eq 'root' }
     its(:group) { should eq 'root' }
-    its(:mode) { should eq m }
+    its(:mode) { should eq 0o555 }
   end
 end
 
@@ -25,8 +22,5 @@ end
 
 describe command('/var/microfocuslicensing/bin/lsmon') do
   its('stdout') { should match (/\/var\/microfocuslicensing\/bin\/lservrc.net/) }
-end
-
-describe command('/var/microfocuslicensing/bin/lsmon') do
   its('stdout') { should match (/Active/) }
 end

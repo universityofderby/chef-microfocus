@@ -15,7 +15,6 @@ Requirements
 Platform Support
 ----------------
 The following platforms have been tested with Test Kitchen:
-- centos-6
 - centos-7
 
 Dependencies
@@ -29,7 +28,7 @@ Usage
 Include `microfocus` as a dependency in your cookbook's `metadata.rb`.
 
 ```ruby
-depends 'microfocus', '~> 3.0.0'
+depends 'microfocus', '~> 3.1.0'
 ```
 
 Resources
@@ -62,6 +61,33 @@ end
 
 #### Actions
 - `:create` - installs Micro Focus Server Express and License Manager, installs the specified license, then enables and starts the License Manager service.
+
+### microfocus_visual_cobol
+Define a `microfocus_visual_cobol` resource in your recipe. E.g.
+
+```ruby
+microfocus_visual_cobol 'visual_cobol' do
+  visual_cobol_checksum 'Install file checksum'
+  visual_cobol_url 'http://artifacts.derby.ac.uk:80/artifactory/software/microfocus/visual-cobol/setup_visualcobol_devhub_4.0_patchupdate04_196243_redhat_x86_64'
+  visual_cobol_license_checksum 'license file checksum'
+  visual_cobol_license_url 'http://artifacts.derby.ac.uk:80/artifactory/software/microfocus/visual-cobol/PS-CS-UNIX-Linux.mflic'
+end
+
+#### Properties
+- 'group' - group for the Visual Cobol install and license files (default: 'root'),
+- 'mode' - mode for the Visual Cobol install and license files(default: 0o775),
+- 'owner' - owner for the Visual Cobol install and license files (default: 'root'),
+- 'visual_cobol_checksum' - SHA-256 checksum for the Visual Cobol install file.
+- 'visual_cobol_install_path_cob' -, String, default: '/opt/microfocus/VisualCOBOL/bin/cob'
+- 'visual_cobol_license_checksum' - SHA-256 checksum for the Visual Cobol license file.
+- 'visual_cobol_license_install_tool' - full path to install Visual Cobol license (default: '/var/microfocuslicensing/bin/cesadmintool.sh')
+- 'visual_cobol_license_path' -  full path to install Visual Cobol license file (default: '/opt/microfocus/VisualCOBOL/etc/PS-VC-UNIX-Linux')
+- 'visual_cobol_license_url' - URL for the Visual Cobol license archive (required: true)
+- 'visual_cobol_setup_path' - full path to install Visual Cobol application (default: '/tmp/setup_visualcobol')
+- 'visual_cobol_url' - URL for the Visual Cobol archive (required: true)
+
+#### Actions
+- `:create` - installs Micro Focus VisualCOBOL and Visual Cobol License Management Tool, installs the specified license.
 
 Contributing
 ------------
