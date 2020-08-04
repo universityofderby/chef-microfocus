@@ -3,5 +3,12 @@ AllCops:
     - vendor/**/*
     - Guardfile
 
-LineLength:
+Layout/LineLength:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
+
+Style/FrozenStringLiteralComment:
   Enabled: false

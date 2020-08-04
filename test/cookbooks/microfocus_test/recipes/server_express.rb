@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: microfocus_test
-# Recipe:: default
+# Recipe:: server_express
 #
 # Copyright 2016 University of Derby
 #

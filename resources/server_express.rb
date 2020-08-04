@@ -56,15 +56,15 @@ property :mflmcmd_responses, Array, default: lazy {
 }
 
 # default action :create
+# greenletters gem required for responding to interactive install and mflmcmd commands
 action :create do
-  # greenletters gem required for responding to interactive install and mflmcmd commands
   chef_gem 'greenletters' do
     compile_time true
   end
   require 'greenletters'
 
   # install required packages
-  %w(gcc glibc glibc.i686 libgcc libgcc.i686).each do |p|
+  %w[gcc glibc glibc.i686 libgcc libgcc.i686].each do |p|
     package p
   end
 
@@ -166,6 +166,6 @@ action :create do
   # license manager service
   service 'mflm' do
     supports restart: true, status: true
-    action [:enable, :start]
+    action %i[enable start]
   end
 end
