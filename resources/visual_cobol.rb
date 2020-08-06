@@ -26,7 +26,8 @@ property :owner, String, default: 'root'
 property :visual_cobol_checksum, String
 property :visual_cobol_install_path, String, default: '/opt/microfocus/VisualCOBOL'
 property :visual_cobol_license_checksum, String
-property :visual_cobol_license_install_tool, String, default: '/var/microfocuslicensing/bin/cesadmintool.sh'
+#property :visual_cobol_license_install_tool, String, default: '/var/microfocuslicensing/bin/cesadmintool.sh'
+property :visual_cobol_license_bin_path, String, default: '/var/microfocuslicensing/bin'
 property :visual_cobol_license_path, String, default: lazy {"#{visual_cobol_install_path}/etc/PS-VC-UNIX-Linux"}
 property :visual_cobol_license_url, String, required: true
 property :visual_cobol_setup_path, String, default: '/tmp/setup_visualcobol'
@@ -68,7 +69,60 @@ action :create do
 
   # install license
   execute 'visual_cobol_license_install' do
-    command "#{new_resource.visual_cobol_license_install_tool} -install #{new_resource.visual_cobol_license_path}"
+    command "#{new_resource.visual_cobol_license_bin_path}/cesadmintool.sh -install #{new_resource.visual_cobol_license_path}"
     not_if "/var/microfocuslicensing/bin/lsmon | grep '/var/microfocuslicensing/bin/lservrc\.net'"
+    notifies :run, 'execute[stop_mfcesd]', :immediately
+  end
+
+  # stop mfcesd
+  execute 'stop_mfcesd' do
+    command "#{::File.join(new_resource.visual_cobol_license_bin_path, 'stopmfcesd.sh')}"
+    action :nothing
+    notifies :run, 'execute[stop_lserv]', :immediately
+  end
+
+  # stop lserv
+  execute 'stop_lserv' do
+    command "#{::File.join(new_resource.visual_cobol_license_bin_path, 'stoplserv.sh')}"
+    action :nothing
+  end
+
+  # lserv service
+  systemd_unit 'lserv.service' do
+    content({
+      Unit: {
+        After: 'network.target',
+        Description: 'Microfocus Visual Cobol lserv service'
+      },
+      Service: {
+        ExecStart: "#{::File.join(new_resource.visual_cobol_license_bin_path, 'startlserv.sh')}",
+        ExecStop: "#{::File.join(new_resource.visual_cobol_license_bin_path, 'stoplserv.sh')}",
+        Type: 'forking'
+      },
+      Install: {
+        WantedBy: 'multi-user.target'
+      }
+    })
+    action [:create, :enable, :start]
+  end
+
+  # mfcesd service
+  systemd_unit 'mfcesd.service' do
+    content({
+      Unit: {
+        After: 'network.target lserv.service',
+        Description: 'Microfocus Visual Cobol mfcesd service',
+        Requires: 'lserv.service'
+      },
+      Service: {
+        ExecStart: "#{::File.join(new_resource.visual_cobol_license_bin_path, 'startmfcesd.sh')}",
+        ExecStop: "#{::File.join(new_resource.visual_cobol_license_bin_path, 'stopmfcesd.sh')}",
+        Type: 'forking'
+      },
+      Install: {
+        WantedBy: 'multi-user.target'
+      }
+    })
+    action [:create, :enable, :start]
   end
 end

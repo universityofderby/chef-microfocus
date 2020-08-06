@@ -81,7 +81,7 @@ end
 - `visual_cobol_checksum` - SHA-256 checksum for the Visual Cobol install file.
 - `visual_cobol_install_path` - full path to Visual Cobol (default: '/opt/microfocus/VisualCOBOL').
 - `visual_cobol_license_checksum` - SHA-256 checksum for the Visual Cobol license file.
-- `visual_cobol_license_install_tool` - full path to install Visual Cobol license (default: '/var/microfocuslicensing/bin/cesadmintool.sh').
+- `visual_cobol_license_bin_path` - full path to Visual Cobol license tool binaries (default: '/var/microfocuslicensing/bin/').
 - `visual_cobol_license_path` - full path to install Visual Cobol license file (default: '/opt/microfocus/VisualCOBOL/etc/PS-VC-UNIX-Linux').
 - `visual_cobol_license_url` - URL for the Visual Cobol license archive (required: true).
 - `visual_cobol_setup_path` - full path to install Visual Cobol application (default: '/tmp/setup_visualcobol').
