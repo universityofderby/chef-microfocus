@@ -27,3 +27,11 @@ describe command('/var/microfocuslicensing/bin/lsmon') do
   its('stdout') { should match (/\/var\/microfocuslicensing\/bin\/lservrc.net/) }
   its('stdout') { should match (/License status\s*:\s*Active/) }
 end
+
+# license manager and daemon services
+%w[lserv mfcesd].each do |s|
+  describe service(s) do
+    it { should be_enabled }
+    it { should be_running }
+  end
+end

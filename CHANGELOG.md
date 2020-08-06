@@ -1,6 +1,10 @@
 microfocus cookbook CHANGELOG
 =============================
 
+4.0.0 (2020-08-06)
+------------------
+- Added mfcesd and lserv services to auto start on reboot.
+
 3.1.0 (2020-08-04)
 ------------------
 - Added microfocus_visual_cobol resource.
