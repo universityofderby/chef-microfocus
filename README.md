@@ -28,7 +28,7 @@ Usage
 Include `microfocus` as a dependency in your cookbook's `metadata.rb`.
 
 ```ruby
-depends 'microfocus', '~> 3.1.0'
+depends 'microfocus', '~> 4.0.0'
 ```
 
 Resources
