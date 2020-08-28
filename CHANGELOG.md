@@ -1,5 +1,8 @@
 microfocus cookbook CHANGELOG
 =============================
+4.1.0 (2020-08-06)
+------------------
+- Updates to packages, added glibc-devel in addition to existing glibc-devel.i686.
 
 4.0.0 (2020-08-06)
 ------------------
