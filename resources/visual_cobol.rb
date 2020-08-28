@@ -26,7 +26,6 @@ property :owner, String, default: 'root'
 property :visual_cobol_checksum, String
 property :visual_cobol_install_path, String, default: '/opt/microfocus/VisualCOBOL'
 property :visual_cobol_license_checksum, String
-#property :visual_cobol_license_install_tool, String, default: '/var/microfocuslicensing/bin/cesadmintool.sh'
 property :visual_cobol_license_bin_path, String, default: '/var/microfocuslicensing/bin'
 property :visual_cobol_license_path, String, default: lazy {"#{visual_cobol_install_path}/etc/PS-VC-UNIX-Linux"}
 property :visual_cobol_license_url, String, required: true
@@ -35,7 +34,7 @@ property :visual_cobol_url, String, required: true
 
 # default action :create
 action :create do
-  %w[glibc libgcc libstdc++ glibc-devel.i686 gcc ed pax xterm].each do |p|
+  %w[ed gcc glibc glibc-devel glibc-devel.i686 libgcc libstdc++ pax xterm].each do |p|
     package p
   end
 
